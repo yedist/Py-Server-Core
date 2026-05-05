@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 
 class Logger:
@@ -14,6 +15,10 @@ class Logger:
 
     async def start(self):
         self.outputs_task = [asyncio.create_task(o) for o in self._outputs]
+
+    @staticmethod
+    def get_object_id():
+        return time.monotonic_ns()
 
     async def _save_log(self, level, event, object_id, time=None, **data):
         # no save time
