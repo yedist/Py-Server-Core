@@ -12,29 +12,26 @@ class Logger:
             self._log_pipes.append(q := asyncio.Queue())
             self._outputs.append(output(q))
 
-    async def _start(self):
-        self.outputs_task = asyncio.create_task(asyncio.gather(*self._outputs))
+    async def start(self):
+        self.outputs_task = [asyncio.create_task(o) for o in self._outputs]
 
-    async def _save_log(self, level, event, time=None, **data):
+    async def _save_log(self, level, event, object_id, time=None, **data):
         # no save time
-        log = {"level": level, "event": event} | data
+        log = {"level": level, "event": event, "object_id": object_id} | data
         for pipe in self._log_pipes:
             await pipe.put(log)
 
-    async def __call__(self, *args, **kwargs):
-        await self(*args, **kwargs)
+    async def debug(self, event, object_id, **kwargs):
+        await self._save_log("debug", event, object_id, **kwargs)
 
-    async def debug(self, event, **kwargs):
-        await self("debug", event, **kwargs)
+    async def info(self, event, object_id, **kwargs):
+        await self._save_log("info", event, object_id, **kwargs)
 
-    async def info(self, event, **kwargs):
-        await self("info", event, **kwargs)
+    async def error(self, event, object_id, **kwargs):
+        await self._save_log("error", event, object_id, **kwargs)
 
-    async def error(self, event, **kwargs):
-        await self("error", event, **kwargs)
+    async def warning(self, event, object_id, **kwargs):
+        await self._save_log("warning", event, object_id, **kwargs)
 
-    async def warning(self, event, **kwargs):
-        await self("warning", event, **kwargs)
-
-    async def critical(self, event, **kwargs):
-        await self("critical", event, **kwargs)
+    async def critical(self, event, object_id, **kwargs):
+        await self._save_log("critical", event, object_id, **kwargs)
