@@ -1,28 +1,22 @@
 import asyncio
 
-from tools import initial_logger
-
-test_id = None
+from tools import LoggerTester
 
 
-async def test(pipe):
-    test_logs = [await pipe.get() for _ in range(5)]
+TEST_LOGS = (
+    ["debug", "debug event", {}],
+    ["info", "info event", {}],
+    ["warning", "warning event", {}],
+    ["error", "error event", {}],
+    ["critical", "critical event", {}]
+)
 
-    for log in test_logs:
-        assert "event" in log and "level" in log and "object_id" in log
 
-    assert all(log.get("object_id") == test_id for log in test_logs)
+async def test():
+    tester = LoggerTester()
+    object_id = await tester.send_all(TEST_LOGS)
+    assert await tester.get_all(TEST_LOGS, object_id=object_id)
 
-async def main():
-    global test_id
-    logger = await initial_logger(test)
-    test_id = logger.get_object_id()
-
-    await logger.debug("test(d)", test_id)
-    await logger.info("test(i)", test_id)
-    await logger.error("test(e)", test_id)
-    await logger.warning("test(w)", test_id)
-    await logger.critical("test(c)", test_id)
 
 if __name__ == '__main__':
-    asyncio.run(main())
+    asyncio.run(test())
