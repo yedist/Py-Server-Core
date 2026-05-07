@@ -1,22 +1,27 @@
 import asyncio
 
-from tools import LoggerTester
+from src.py_server_core import Logger
 
 
-TEST_LOGS = (
-    ["debug", "debug event", {}],
-    ["info", "info event", {}],
-    ["warning", "warning event", {}],
-    ["error", "error event", {}],
-    ["critical", "critical event", {}]
-)
+async def main():
+    logger = Logger()
+    pipe = logger.make_pipe()
 
+    await logger.debug("debug event", None)
+    assert await pipe.get() == {"level": "debug", "event": "debug event", "object_id": None}
 
-async def test():
-    tester = LoggerTester()
-    object_id = await tester.send_all(TEST_LOGS)
-    assert await tester.get_all(TEST_LOGS, object_id=object_id)
+    await logger.info("info event", None)
+    assert await pipe.get() == {"level": "info", "event": "info event", "object_id": None}
+
+    await logger.warning("warning event", None)
+    assert await pipe.get() == {"level": "warning", "event": "warning event", "object_id": None}
+
+    await logger.error("error event", None)
+    assert await pipe.get() == {"level": "error", "event": "error event", "object_id": None}
+
+    await logger.critical("critical event", None)
+    assert await pipe.get() == {"level": "critical", "event": "critical event", "object_id": None}
 
 
 if __name__ == '__main__':
-    asyncio.run(test())
+    asyncio.run(main())
