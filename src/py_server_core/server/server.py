@@ -4,11 +4,9 @@ from ..logger import Logger
 
 
 class Server:
-    def __init__(self, host: str, port: int, logger=None):
-        self._logger = logger or Logger()
+    def __init__(self, host: str, port: int, logs_stream: asyncio.Queue[dict] | None = None):
         self._listen_address = (host, port)
-
-        self._server_id = self._logger.get_object_id()
+        self._logger = Logger(logs_stream)
         self._asyncio_server: asyncio.Server | None = None
 
     @property
@@ -16,7 +14,7 @@ class Server:
         return bool(self._asyncio_server)
 
     def restart(self):
-        self.__init__(*self._listen_address)
+        self.__init__(*self._listen_address, logs_stream=self._logger.queue)
 
     async def _connection_reception(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         pass
