@@ -16,7 +16,7 @@ class Server:
         return bool(self._asyncio_server)
 
     def restart(self):
-        self.__init__(*self._listen_address)
+        self.__init__(*self._listen_address, logger=self._logger)
 
     async def _connection_reception(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
         pass
@@ -25,10 +25,10 @@ class Server:
         self._asyncio_server = await asyncio.start_server(self._connection_reception, *self._listen_address)
 
         address = [sock.getsockname() for sock in self._asyncio_server.sockets]
-        await self._logger.info("Server up", self._server_id, address=address)
+        await self._logger.info("server up", self._server_id, address=address)
 
     async def close(self):
         self._asyncio_server.close()
         await self._asyncio_server.wait_closed()
         self._asyncio_server = None
-        await self._logger.info("Server closed", self._server_id)
+        await self._logger.info("server closed", self._server_id)
