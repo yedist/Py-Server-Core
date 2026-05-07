@@ -3,8 +3,7 @@ import uuid
 
 
 class Logger:
-    # no typing
-    def __init__(self):  # name not good
+    def __init__(self):
         self._output_pipes = []
 
     def make_pipe(self):
