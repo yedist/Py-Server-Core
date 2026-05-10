@@ -1,4 +1,4 @@
-from .logger import Logger, LogLevel
+from .logger import Logger, LogLevel, LogLevels
 
 
-__all__ = ['Logger', 'LogLevel']
+__all__ = ['Logger', 'LogLevel', 'LogLevels']
