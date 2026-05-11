@@ -20,8 +20,8 @@ class Server:
     async def up(self):
         self._asyncio_server = await asyncio.start_server(self._connection_reception, *self._listen_address)
 
-        address = [sock.getsockname() for sock in self._asyncio_server.sockets]
-        await self._logger.info("Server up", address=address)
+        address = [(sock.family, sock.getsockname()) for sock in self._asyncio_server.sockets]
+        await self._logger.info("Server up", addresses=address)
 
     async def close(self):
         self._asyncio_server.close()
