@@ -1,38 +1,38 @@
-import asyncio
-import uuid
+from asyncio import Queue
+
+from .log_level import LogLevel, LogLevels
 
 
 class Logger:
-    # no typing
-    def __init__(self):  # name not good
-        self._output_pipes = []
+    def __init__(self, logs_stream: Queue, filter_to_level: LogLevel = LogLevels.DEBUG):
+        if not isinstance(logs_stream, Queue):
+            raise TypeError(
+                "logs_stream must be an instance of asyncio.Queue"
+            )
 
-    def make_pipe(self):
-        self._output_pipes.append(q := asyncio.Queue())
-        return q
+        self.logs_stream = logs_stream
+        self._level_filter = filter_to_level
 
-    @staticmethod
-    def get_object_id():
-        return uuid.uuid4()
+    @classmethod
+    def noop(cls):
+        return cls(Queue())
 
-    async def _save_log(self, log):
-        for pipe in self._output_pipes:
-            await pipe.put(log)
+    async def debug(self, event, **parameters):
+        await self._write_log(LogLevels.DEBUG, event, parameters)
 
-    async def debug(self, event, object_id, **kwargs):
-        await self._save_log(["debug", event, object_id, kwargs])
+    async def info(self, event, **parameters):
+        await self._write_log(LogLevels.INFO, event, parameters)
 
-    async def info(self, event, object_id, **kwargs):
-        await self._save_log(["info", event, object_id, kwargs])
+    async def error(self, event, **parameters):
+        await self._write_log(LogLevels.ERROR, event, parameters)
 
-    async def error(self, event, object_id, **kwargs):
-        await self._save_log(["error", event, object_id, kwargs])
+    async def warning(self, event, **parameters):
+        await self._write_log(LogLevels.WARNING, event, parameters)
 
-    async def warning(self, event, object_id, **kwargs):
-        await self._save_log(["warning", event, object_id, kwargs])
+    async def critical(self, event, **parameters):
+        await self._write_log(LogLevels.CRITICAL, event, parameters)
 
-    async def critical(self, event, object_id, **kwargs):
-        await self._save_log(["critical", event, object_id, kwargs])
-
-    async def close(self):
-        await self._save_log(None)
+    async def _write_log(self, level, event, parameters):
+        if level >= self._level_filter:
+            log = {"level": level, "event": event} | parameters
+            await self.logs_stream.put(log)
