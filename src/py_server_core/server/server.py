@@ -7,11 +7,11 @@ from ..logs import LoggingCoordinator
 
 
 class Server:
-    def __init__(self, host: str, port: int, logs_handlers: Iterable[logging.Handler] = logging.NullHandler()):
+    def __init__(self, host: str, port: int, log_handlers: Iterable[logging.Handler] = logging.NullHandler()):
         self._listen_address = (host, port)
         self._asyncio_server: asyncio.Server | None = None
 
-        log_service = LoggingCoordinator(*logs_handlers)
+        log_service = LoggingCoordinator(*log_handlers)
         self._logger = log_service.get_logger(__name__)
 
     @property
@@ -27,7 +27,7 @@ class Server:
 
         try:
             self._asyncio_server = await asyncio.start_server(self._connection_reception, *self._listen_address)
-        except Exception:
+        except Exception as exception:
             self._logger.exception("Server up error")
             raise ServerStartingError(exception) from exception
         else:
