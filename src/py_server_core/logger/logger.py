@@ -17,7 +17,7 @@ class Logger:
     def stop(self):
         self.listener.stop()
 
-    def make_logger(self, name: str) -> logging.Logger:
+    def get_logger(self, name: str) -> logging.Logger:
         logger = logging.getLogger(name)
         logger.addHandler(self._handler)
         logger.setLevel(logging.DEBUG)

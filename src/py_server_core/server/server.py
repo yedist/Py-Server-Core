@@ -10,7 +10,7 @@ class Server:
         self._asyncio_server: asyncio.Server | None = None
 
         main_logger = Logger(*logs_handles)
-        self._logger = main_logger.make_logger(__name__)
+        self._logger = main_logger.get_logger(__name__)
 
     @property
     def in_work(self) -> bool:
