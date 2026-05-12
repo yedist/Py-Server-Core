@@ -2,6 +2,7 @@ import asyncio
 import logging
 from collections.abc import Iterable
 
+from .errors import ServerStartingError, ServerClosingError
 from ..logs import LoggingCoordinator
 
 
@@ -26,14 +27,9 @@ class Server:
 
         try:
             self._asyncio_server = await asyncio.start_server(self._connection_reception, *self._listen_address)
-        except Exception as exception:
-            self._logger.error(
-                "Server up error",
-                extra={
-                    "exception_message": str(exception),
-                    "exception_type": type(exception).__name__
-                }
-            )
+        except Exception:
+            self._logger.exception("Server up error")
+            raise ServerStartingError(exception) from exception
         else:
             self._logger.info(
                 "Server up",
@@ -53,12 +49,7 @@ class Server:
             await self._asyncio_server.wait_closed()
             self._asyncio_server = None
         except Exception as exception:
-            self._logger.error(
-                "Server close error",
-                extra={
-                    "exception_message": str(exception),
-                    "exception_type": type(exception).__name__
-                }
-            )
+            self._logger.exception("Server close error")
+            raise ServerClosingError(exception) from exception
         else:
             self._logger.info("Server closed")
