@@ -1,8 +1,10 @@
 class ServerError(Exception):
     pass
 
-class ServerStartingError(ServerError):
+
+class ServerStartError(ServerError):
     pass
 
-class ServerClosingError(ServerError):
+
+class ServerCloseError(ServerError):
     pass
