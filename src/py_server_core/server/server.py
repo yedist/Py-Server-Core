@@ -5,7 +5,7 @@ from ..logs import LoggingCoordinator
 
 
 class Server:
-    def __init__(self, host: str, port: int, logs_handles: tuple[logging.Handler]):
+    def __init__(self, host: str, port: int, logs_handles: tuple[logging.Handler] = logging.NullHandler()):
         self._listen_address = (host, port)
         self._asyncio_server: asyncio.Server | None = None
 
