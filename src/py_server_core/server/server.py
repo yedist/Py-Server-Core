@@ -20,13 +20,44 @@ class Server:
         pass
 
     async def up(self):
-        self._asyncio_server = await asyncio.start_server(self._connection_reception, *self._listen_address)
+        if self.in_work:
+            return
 
-        addresses = [(sock.family, sock.getsockname()) for sock in self._asyncio_server.sockets]
-        self._logger.info("Server up", extra={"addresses": addresses})
+        try:
+            self._asyncio_server = await asyncio.start_server(self._connection_reception, *self._listen_address)
+        except Exception as exception:
+            self._logger.error(
+                "Server up error",
+                extra={
+                    "exception_message": str(exception),
+                    "exception_type": type(exception).__name__
+                }
+            )
+        else:
+            self._logger.info(
+                "Server up",
+                extra={
+                    "addresses": [
+                        (sock.family, sock.getsockname()) for sock in self._asyncio_server.sockets
+                    ]
+                }
+            )
 
     async def close(self):
-        self._asyncio_server.close()
-        await self._asyncio_server.wait_closed()
-        self._asyncio_server = None
-        self._logger.info("Server closed")
+        if not self.in_work:
+            return
+
+        try:
+            self._asyncio_server.close()
+            await self._asyncio_server.wait_closed()
+            self._asyncio_server = None
+        except Exception as exception:
+            self._logger.error(
+                "Server up error",
+                extra={
+                    "exception_message": str(exception),
+                    "exception_type": type(exception).__name__
+                }
+            )
+        else:
+            self._logger.info("Server closed")
