@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from ..logger import Logger
+from ..logs import LoggingCoordinator
 
 
 class Server:
@@ -9,8 +9,8 @@ class Server:
         self._listen_address = (host, port)
         self._asyncio_server: asyncio.Server | None = None
 
-        main_logger = Logger(*logs_handles)
-        self._logger = main_logger.get_logger(__name__)
+        log_service = LoggingCoordinator(*logs_handles)
+        self._logger = log_service.get_logger(__name__)
 
     @property
     def in_work(self) -> bool:
