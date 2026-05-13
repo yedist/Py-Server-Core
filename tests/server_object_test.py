@@ -7,11 +7,11 @@ from test_tools import test_log_queue
 
 
 def initial():
-    logs_queue, logs_handler = test_log_queue()
+    logs_queue, log_handler = test_log_queue()
     server = Server(
         host="127.0.0.1",
         port=0,  # == the system will select a free port
-        logs_handles=(logs_handler,)
+        log_handlers=(log_handler,)
     )
     return server, logs_queue
 
