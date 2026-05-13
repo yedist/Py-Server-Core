@@ -3,7 +3,7 @@ import logging.handlers
 from queue import Queue
 
 
-class Logger:
+class LoggingCoordinator:
     def __init__(self, *handlers: logging.Handler, auto_start=True):
         self._handler = logging.handlers.QueueHandler(Queue())
         self.listener = logging.handlers.QueueListener(self._handler.queue, *handlers)
