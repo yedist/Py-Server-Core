@@ -4,6 +4,7 @@ from collections.abc import Iterable
 
 from .errors import ServerStartError, ServerCloseError
 from ..logs import LoggingCoordinator
+from ..connection import Connection
 
 
 class Server:
@@ -20,7 +21,7 @@ class Server:
         return self._server is not None
 
     async def _on_connection(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        pass
+        connection = Connection(reader, writer)
 
     async def up(self):
         if self.is_running:

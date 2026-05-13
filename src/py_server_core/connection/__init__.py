@@ -1,1 +1,4 @@
-__all__ = []
+from .connection import Connection
+
+
+__all__ = ['Connection']
