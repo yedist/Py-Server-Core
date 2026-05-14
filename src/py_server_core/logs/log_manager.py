@@ -15,7 +15,6 @@ class LogManager:
     def __init__(self, *handlers: logging.Handler, auto_start=True):
         self._handler = logging.handlers.QueueHandler(Queue())
         self._listener = logging.handlers.QueueListener(self._handler.queue, *handlers)
-        print(__name__)
         self.logger = make_logger(__name__, self._handler)
 
         if auto_start:
