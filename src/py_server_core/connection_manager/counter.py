@@ -3,7 +3,7 @@ import asyncio
 
 class Counter:
     def __init__(self, limit):
-        self.limit = limit
+        self._limit = limit
         self._value = 0
         self._lock = asyncio.Lock()
 
@@ -19,7 +19,7 @@ class Counter:
 
     async def increment(self):
         async with self._lock:
-            self._value = min(self.limit, self._value + 1)
+            self._value = min(self._limit, self._value + 1)
 
     async def decrement(self):
         async with self._lock:
