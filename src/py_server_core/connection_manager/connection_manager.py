@@ -18,6 +18,7 @@ class ConnectionManager:
             try:
                 await self._connection_handler(connection)
             finally:
+                await self.close_connection(connection)
                 await self._connections_counter.down()
 
     async def close_connection(self, connection):
