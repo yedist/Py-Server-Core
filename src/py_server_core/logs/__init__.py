@@ -1,4 +1,4 @@
-from .log_manager import LogManager
+from .get_logger import get_logger
 
 
-__all__ = ['LogManager']
+__all__ = ['get_logger']
