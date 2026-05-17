@@ -3,17 +3,16 @@ import logging
 from collections.abc import Iterable
 
 from .errors import ServerStartError, ServerCloseError
-from ..logs import LoggingCoordinator
+from ..logs import get_logger
 
 
 class Server:
-    def __init__(self, host: str, port: int, log_handlers: Iterable[logging.Handler] = logging.NullHandler()):
+    def __init__(self, host: str, port: int):
         self._host = host
         self._port = port
         self._server: asyncio.Server | None = None
 
-        log_service = LoggingCoordinator(*log_handlers)
-        self._logger = log_service.get_logger(__name__)
+        self._logger = get_logger(__name__)
 
     @property
     def is_running(self) -> bool:

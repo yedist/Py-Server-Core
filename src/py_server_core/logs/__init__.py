@@ -1,4 +1,4 @@
-from .logging_coordinator import LoggingCoordinator
+from .get_logger import get_logger
 
 
-__all__ = ['LoggingCoordinator']
+__all__ = ['get_logger']
