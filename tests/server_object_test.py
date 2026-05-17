@@ -8,11 +8,17 @@ from test_tools import test_log_queue
 
 def initial():
     logs_queue, log_handler = test_log_queue()
+
+    root = logging.getLogger()
+    root.handlers.clear()
+    root.setLevel(logging.DEBUG)
+    root.addHandler(log_handler)
+
     server = Server(
         host="127.0.0.1",
         port=0,  # == the system will select a free port
-        log_handler=log_handler
     )
+
     return server, logs_queue
 
 

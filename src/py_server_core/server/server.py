@@ -7,12 +7,12 @@ from ..logs import get_logger
 
 
 class Server:
-    def __init__(self, host: str, port: int, log_handler: Iterable[logging.Handler] = logging.NullHandler()):
+    def __init__(self, host: str, port: int):
         self._host = host
         self._port = port
         self._server: asyncio.Server | None = None
 
-        self._logger = get_logger(__name__, log_handler)
+        self._logger = get_logger(__name__)
 
     @property
     def is_running(self) -> bool:

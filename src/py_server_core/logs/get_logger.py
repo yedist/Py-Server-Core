@@ -2,7 +2,7 @@ import logging
 import logging.handlers
 
 
-def get_logger(name: str, handler: logging.Handler) -> logging.Logger:
+def get_logger(name: str) -> logging.Logger:
     logger = logging.getLogger(name)
-    logger.addHandler(handler or logging.NullHandler())
+    logger.addHandler(logging.NullHandler())
     return logger
