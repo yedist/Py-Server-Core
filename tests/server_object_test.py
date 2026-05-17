@@ -11,7 +11,7 @@ def initial():
     server = Server(
         host="127.0.0.1",
         port=0,  # == the system will select a free port
-        log_handler=(log_handler,)
+        log_handler=log_handler
     )
     return server, logs_queue
 
