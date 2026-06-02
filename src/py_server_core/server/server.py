@@ -4,6 +4,7 @@ import logging
 
 from .errors import ServerStartError, ServerCloseError
 from ._socket_functions import get_addresses
+from ..connection import Connection
 
 
 logger = logging.getLogger(__name__)
@@ -22,7 +23,7 @@ class Server:
         return self._server is not None
 
     async def _on_connection(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        self._connection_handler(reader, writer)
+        self._connection_handler(Connection(reader, writer))
 
     async def up(self):
         if self.is_running:
