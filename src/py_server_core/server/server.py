@@ -1,6 +1,7 @@
 from typing import Final
 import asyncio
 import logging
+from typing import Callable
 
 from .errors import ServerStartError, ServerCloseError
 from ._socket_functions import get_addresses
@@ -12,7 +13,7 @@ logger.addHandler(logging.NullHandler())
 
 
 class Server:
-    def __init__(self, host: str, port: int, connection_handler):
+    def __init__(self, host: str, port: int, connection_handler: Callable[[Connection], None]):
         self.host: Final = host
         self.port: Final = port
         self._connection_handler = connection_handler
