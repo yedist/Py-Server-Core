@@ -9,9 +9,10 @@ logger.addHandler(logging.NullHandler())
 
 
 class Server:
-    def __init__(self, host: str, port: int):
+    def __init__(self, host: str, port: int, connection_handler):
         self._host = host
         self._port = port
+        self._connection_handler = connection_handler
         self._server: asyncio.Server | None = None
 
     @property
@@ -19,7 +20,7 @@ class Server:
         return self._server is not None
 
     async def _on_connection(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        pass
+        self._connection_handler(reader, writer)
 
     async def up(self):
         if self.is_running:
