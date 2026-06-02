@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from typing import Callable
 
 from .errors import ServerStartError, ServerCloseError
 from ..connection import Connection
@@ -10,7 +11,7 @@ logger.addHandler(logging.NullHandler())
 
 
 class Server:
-    def __init__(self, host: str, port: int, connection_handler):
+    def __init__(self, host: str, port: int, connection_handler: Callable[[Connection], None]):
         self._host = host
         self._port = port
         self._connection_handler = connection_handler
