@@ -34,4 +34,4 @@ class Connection:
         else:
             return True  # closing success
         finally:
-            await self._manager.remove_connection(self)
+            await self._manager.unregistration(self)

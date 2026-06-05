@@ -10,10 +10,10 @@ class ConnectionManager:
     async def num_connections(self):
         return await self._connections_counter.value
 
-    async def new_connection(self, connection: Connection):
+    async def registration(self, connection: Connection):
         await self.connections_counter.increment()
 
-    async def remove_connection(self, connection: Connection):
+    async def unregistration(self, connection: Connection):
         await self.connections_counter.decrement()
 
     def close_all_connections(self):
