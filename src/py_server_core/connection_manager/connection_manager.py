@@ -1,15 +1,20 @@
 from ..connection import Connection
+from .counter import Counter
 
 
 class ConnectionManager:
     def __init__(self):
-        self.connections_counter = 0
+        self._connections_counter = Counter()
 
-    def new_connection(self, connection: Connection):
-        self.connections_counter += 1
+    @property
+    async def num_connections(self):
+        return await self._connections_counter.value
 
-    def close_connection(self, connection: Connection):
-        self.connections_counter -= 1
+    async def new_connection(self, connection: Connection):
+        await self.connections_counter.increment()
+
+    async def close_connection(self, connection: Connection):
+        await self.connections_counter.decrement()
 
     def close_all_connections(self):
         ...
