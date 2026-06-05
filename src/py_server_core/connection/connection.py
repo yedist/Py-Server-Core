@@ -24,11 +24,14 @@ class Connection:
         self._writer.write(data)
         await self._writer.drain()
 
-    async def close(self):
+    async def close(self) -> bool:
         try:
             self._writer.close()
             await self._writer.wait_closed()
         except:
             ...  # log...
+            return False  # closing failed
+        else:
+            return True  # closing success
         finally:
             await self._manager.remove_connection(self)
