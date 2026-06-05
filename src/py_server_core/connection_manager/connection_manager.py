@@ -13,9 +13,8 @@ class ConnectionManager:
     async def new_connection(self, connection: Connection):
         await self.connections_counter.increment()
 
-    async def close_connection(self, connection: Connection):
+    async def remove_connection(self, connection: Connection):
         await self.connections_counter.decrement()
-        await connection.close()
 
     def close_all_connections(self):
         ...

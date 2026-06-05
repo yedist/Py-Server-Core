@@ -9,8 +9,6 @@ class Connection:
         self._writer = writer
         self._manager = manager
 
-        self.closed = False
-
     async def get(self) -> bytes:
         return await self._reader.read(1024)
 
@@ -19,12 +17,11 @@ class Connection:
         await self._writer.drain()
 
     async def close(self):
-        if self.closed:
-            return
-
-        self._writer.close()
-        await self._writer.wait_closed()
-        self.closed = True
-
-        if self._manager:
-            await self._manager.close_connection(self)
+        try:
+            self._writer.close()
+            await self._writer.wait_closed()
+        except:
+            ...  # log...
+        finally:
+            if self._manager:
+                await self._manager.remove_connection(self)
