@@ -3,8 +3,16 @@ from asyncio import StreamReader, StreamWriter
 from ..connection_manager import ConnectionManager
 
 
+noop_connection_manger = ConnectionManager()
+
+
 class Connection:
-    def __init__(self, reader: StreamReader, writer: StreamWriter, manager: ConnectionManager | None = None):
+    def __init__(
+        self,
+        reader: StreamReader,
+        writer: StreamWriter,
+        manager: ConnectionManager = noop_connection_manger
+    ):
         self._reader = reader
         self._writer = writer
         self._manager = manager
@@ -23,5 +31,4 @@ class Connection:
         except:
             ...  # log...
         finally:
-            if self._manager:
-                await self._manager.remove_connection(self)
+            await self._manager.remove_connection(self)
