@@ -1,4 +1,5 @@
 from asyncio import StreamReader, StreamWriter
+from time import monotonic
 
 from ..connection_manager import ConnectionManager
 
@@ -16,6 +17,7 @@ class Connection:
         self._reader = reader
         self._writer = writer
         self._manager = manager
+        self.start_time = monotonic()
 
     async def get(self) -> bytes:
         return await self._reader.read(1024)
