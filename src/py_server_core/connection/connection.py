@@ -1,10 +1,10 @@
 from asyncio import StreamReader, StreamWriter
 from time import monotonic
 
-from ..connection_manager import ConnectionManager
+from ..connection_management import ConnectionRegistrar
 
 
-noop_connection_manger = ConnectionManager()
+noop_connection_registrar = ConnectionRegistrar()
 
 
 class Connection:
@@ -12,11 +12,11 @@ class Connection:
         self,
         reader: StreamReader,
         writer: StreamWriter,
-        manager: ConnectionManager = noop_connection_manger
+        registrar: ConnectionRegistrar = noop_connection_registrar
     ):
         self._reader = reader
         self._writer = writer
-        self._manager = manager
+        self._registrar = registrar
         self.start_time = monotonic()
 
     async def get(self) -> bytes:
@@ -36,4 +36,4 @@ class Connection:
         else:
             return True  # closing success
         finally:
-            await self._manager.unregistration(self)
+            await self._registrar.unregistration(self)

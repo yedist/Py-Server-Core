@@ -10,13 +10,16 @@ async def _wait_for_monotonic(target: float):
 
 
 class ConnectionsTimer:
-    def __init__(self, ttl: float):
+    def __init__(self, ttl: float | None = None):
         self._ttl = ttl
-        self.connections_queue = asyncio.Queue()
-        self._timer_task = asyncio.create_task(self._loop())
+        self.connections_queue = asyncio.Queue()  # with lock?
+
+        if self._ttl is not None:
+            self._timer_task = asyncio.create_task(self._loop())
 
     async def start_timeout(self, connection: Connection):
-        await self.connections_queue.put(connection)
+        if self._ttl is not None:
+            await self.connections_queue.put(connection)
 
     async def _loop(self):
         while True:
