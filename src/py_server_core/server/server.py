@@ -2,6 +2,7 @@ import asyncio
 import logging
 from typing import Callable
 
+from ..connection_management import ConnectionRegistrar, ConnectionsTimer
 from .errors import ServerStartError, ServerCloseError
 from ..connection import Connection
 
@@ -11,18 +12,30 @@ logger.addHandler(logging.NullHandler())
 
 
 class Server:
-    def __init__(self, host: str, port: int, connection_handler: Callable[[Connection], None]):
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        connection_handler: Callable[[Connection], None],
+        max_connections: int | None = None,
+        connection_ttl: float | None = None,
+    ):
         self._host = host
         self._port = port
         self._connection_handler = connection_handler
         self._server: asyncio.Server | None = None
+        self._connection_registrar = ConnectionRegistrar(max_connections)
+        self._connections_timer = ConnectionsTimer(connection_ttl)
 
     @property
     def is_running(self) -> bool:
         return self._server is not None
 
     async def _on_connection(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        self._connection_handler(Connection(reader, writer))
+        connection = Connection(reader, writer)
+        await self._connection_registrar.registration(connection)
+        await self._connections_timer.start_timeout(connection)
+        await self._connection_handler(connection)
 
     async def up(self):
         if self.is_running:
