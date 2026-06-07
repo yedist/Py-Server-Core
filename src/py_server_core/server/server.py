@@ -2,9 +2,9 @@ import asyncio
 import logging
 from typing import Callable
 
-from ..connection_management import ConnectionRegistrar, ConnectionsTimer
+from py_server_core.connection_management import ConnectionRegistrar, ConnectionsTimer
+from py_server_core.connection import Connection
 from .errors import ServerStartError, ServerCloseError
-from ..connection import Connection
 
 
 logger = logging.getLogger(__name__)

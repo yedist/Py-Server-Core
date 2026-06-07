@@ -1,7 +1,7 @@
 from asyncio import StreamReader, StreamWriter
 from time import monotonic
 
-from ..connection_management import ConnectionRegistrar
+from py_server_core.connection_management import ConnectionRegistrar
 
 
 noop_connection_registrar = ConnectionRegistrar()
