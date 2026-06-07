@@ -32,7 +32,7 @@ class Server:
         return self._server is not None
 
     async def _on_connection(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        connection = Connection(reader, writer)
+        connection = Connection(reader, writer, closed_queue=self._connection_registrar.closed_connections_queue)
         await self._connection_registrar.registration(connection)
         await self._connections_timer.start_timeout(connection)
         await self._connection_handler(connection)
