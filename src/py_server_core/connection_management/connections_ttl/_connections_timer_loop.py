@@ -9,8 +9,8 @@ async def _wait_for_monotonic(target: float):
         await asyncio.sleep(0.01)
 
 
-async def connections_timer_loop(queue: asyncio.Queue, ttl: float):
+async def connections_timer_loop(connections_queue: asyncio.Queue, connection_ttl: float):
     while True:
-        connection: Connection = await queue.get()
-        await _wait_for_monotonic(connection.start_time + ttl)
+        connection: Connection = await connections_queue.get()
+        await _wait_for_monotonic(connection.start_time + connection_ttl)
         await connection.close()

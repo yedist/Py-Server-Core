@@ -18,21 +18,26 @@ class Server:
         port: int,
         connection_handler: Callable[[Connection], None],
         max_connections: int | None = None,
-        connection_ttl: float | None = None,
+        connection_ttl: float = -1,
     ):
         self._host = host
         self._port = port
         self._connection_handler = connection_handler
-        self._server: asyncio.Server | None = None
-        self._connection_registrar = ConnectionRegistrar(max_connections)
         self._connections_timer = ConnectionsTimer(connection_ttl)
+        self._connection_registrar = ConnectionRegistrar(max_connections)
+
+        self._server: asyncio.Server | None = None
 
     @property
     def is_running(self) -> bool:
         return self._server is not None
 
     async def _on_connection(self, reader: asyncio.StreamReader, writer: asyncio.StreamWriter):
-        connection = Connection(reader, writer, closed_queue=self._connection_registrar.closed_connections_queue)
+        connection = Connection(
+            reader,
+            writer,
+            closed_queue=self._connection_registrar.closed_connections_queue
+        )
         await self._connection_registrar.registration(connection)
         await self._connections_timer.start_timeout(connection)
         await self._connection_handler(connection)
