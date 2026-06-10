@@ -1,8 +1,8 @@
 import asyncio
 from typing import Final
 
-from ..connection import Connection
-
+from py_server_core.connection import Connection
+from ._connection_registrar_loop import _unregistration_loop
 
 class ConnectionRegistrar:
     def __init__(self, max_connections: int | None = None):
@@ -10,7 +10,9 @@ class ConnectionRegistrar:
         self.closed_connections_queue: asyncio.Queue[Connection] = asyncio.Queue()
         self._all_connections = set()
 
-        self._unregistration_task = asyncio.create_task(self._unregistration_loop())
+        self._unregistration_task = asyncio.create_task(
+            _unregistration_loop(self.closed_connections_queue, self._all_connections)
+        )
 
     @property
     async def num_connections(self):
@@ -21,8 +23,3 @@ class ConnectionRegistrar:
             self._all_connections.add(connection)
         else:
             ...  # reached the limit
-
-    async def _unregistration_loop(self):
-        while True:
-            connection: Connection = await self.closed_connections_queue.get()
-            self._all_connections.discard(connection)
